@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta charset="utf-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+        <title>tinymce with php</title>
+        <link type="text/css" rel="stylesheet" href="http://tinymce.cachefly.net/4.0/skins/lightgray/content.min.css" />
+        <link type="text/css" rel="stylesheet" href="upload/plugin.css" />
+        <script src="http://tinymce.cachefly.net/4.0/tinymce.min.js"></script>
+        <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.2/jquery.min.js"></script>
+        <script src="upload/plugin.js"></script>
+        <script type="text/javascript">
+            tinymce.init({
+                selector: "textarea",
+                toolbar: "bold italic strikethrough link unlink numlist bullist blockquote upload image fullscreen",
+                width: 600,
+                height: 300,
+                upload_action: 'upload.php',
+                upload_file_name: 'userfile', 
+                plugins: [
+                    "advlist autolink lists link image charmap print preview anchor",
+                    "searchreplace visualblocks code fullscreen",
+                    "insertdatetime media table contextmenu paste upload"
+                ]
+            });
+            $(function () {
+                $('#save').click(
+                        function () {
+                            $.ajax({
+                                url: "form.php",
+                                type: 'POST',
+                                datetyep:'html',
+                                data: {content: tinyMCE.activeEditor.getContent()},
+                                error: function (xhr) {
+                                    alert('Ajax request 發生錯誤');
+                                },
+                                success: function (response) {
+                                    tinyMCE.activeEditor.setProgressState(0);
+
+                                    tinyMCE.activeEditor.setContent(response)
+                                    alert('saved');
+                                }});
+                            tinyMCE.activeEditor.setProgressState(1);
+
+
+                        }
+                )
+            }
+            )
+        </script>
+    </head>
+    <body>
+        <div style="width: 600px; margin: 20px auto;">
+            <form method="post" action="form.php">
+                <textarea name="content"><input type="button" style="width: 19px; height: 16px; border: none; background: url(upload/upload_icon.png);" />可以上傳檔案或圖片</textarea>
+            </form>
+        </div>
+        <button id="save">儲存</button>
+    </body>
+</html>
